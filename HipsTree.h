@@ -1,5 +1,5 @@
-#ifndef TREE_H
-#define TREE_H
+#ifndef HIPSTREE_H
+#define HIPSTREE_H
 
 #include <cmath>
 #include <ctime>
@@ -8,27 +8,117 @@
 #include <stack>
 #include <vector>
 
-#include "Node.h"
-
+/*
+ * Node class
+ */
 template <typename T>
-class Tree
+class Node
 {
 public:
-	static std::shared_ptr<Tree<T>> getTree()
+	T getValue()
+	{
+		return value;
+	}
+	void setValue(T v)
+	{
+		value = v;
+	}
+	Node* getLeft()
+	{
+		return left;
+	}
+	Node* getRight()
+	{
+		return right;
+	}
+	void setLeft(Node* node)
+	{
+		left = node;
+	}
+	void setRight(Node* node)
+	{
+		right = node;
+	}
+	bool isLeaf()
+	{
+		return (left == nullptr) && (right == nullptr);
+	}
+	void swapBranches()
+	{
+		std::swap(left, right);
+	}
+	void inOrderValues(std::vector<T>& values)
+	{
+		if (isLeaf())
+		{
+			values.push_back(value);
+		}
+		else
+		{
+			if (left != nullptr)
+				left->inOrderValues(values);
+			if (right != nullptr)
+				right->inOrderValues(values);
+		}
+	}
+	void inOrderNodes(std::vector<Node<T>*>& nodes)
+	{
+		if (isLeaf())
+		{
+			nodes.push_back(this);
+		}
+		else
+		{
+			if (left != nullptr)
+				left->inOrderNodes(nodes);
+			if (right != nullptr)
+				right->inOrderNodes(nodes);
+		}
+	}
+
+private:
+	Node* left = nullptr;
+	Node* right = nullptr;
+	T value = 0;
+};
+
+/*
+ * Tree class
+ */
+template <typename T>
+class HipsTree
+{
+public:
+	/*
+	 * Gets a shared pointer to a blank tree
+	 */
+	static std::shared_ptr<HipsTree<T>> getTree()
 	{
 		srand(time(nullptr));
-		return std::make_shared<Tree<T>>();
+		return std::make_shared<HipsTree<T>>();
 	}
-	static std::shared_ptr<Tree<T>> getTree(const std::vector<T>& values)
+	/*
+	 * Gets a shared pointer to a tree populated with a vector of leaves
+	 */
+	static std::shared_ptr<HipsTree<T>> getTree(const std::vector<T>& values)
 	{
 		srand(time(nullptr));
-		return std::make_shared<Tree<T>>(values);
+		return std::make_shared<HipsTree<T>>(values);
 	}
-	Tree() = default;
-	explicit Tree(const std::vector<T>& values)
+	/*
+	 * Default constructor (tricky to use without accidentally calling deconstructor)
+	 */
+	HipsTree() = default;
+	/*
+	 * Constructor with values (tricky to use without accidentally calling deconstructor)
+	 */
+	explicit HipsTree(const std::vector<T>& values)
 	{
 		populateByVector(values);
 	}
+	/*
+	 * Populates the tree with a vector of leaves - the vector should be a power of 2
+	 */
 	void populateByVector(const std::vector<T>& values)
 	{
 		if (!isPowerOfTwo(values.size()))
@@ -40,51 +130,85 @@ public:
 			treeIt.next()->setValue(value);
 		}
 	}
+	/*
+	 * Populates the tree to a given number of layers filling the leaves with a given value
+	 */
 	void populateToLevelValue(size_t level, T value)
 	{
 		resetTree();
 		root = populateToLevelValueHelper(level, value);
 		depth = level;
 	}
+	/*
+	 * Creates a tree with uninitialized values to a given number of layers
+	 */
 	void populateToLevel(size_t level)
 	{
 		resetTree();
 		root = populateToLevelHelper(level);
 		depth = level;
 	}
+	/*
+	 * Deletes all nodes and makes tree have size 0
+	 */
 	void resetTree()
 	{
 		recursiveDelete(root);
 		root = nullptr;
+		depth = 0;
 	}
+	/*
+	 * Gets a vector of copies of the values of the leaves
+	 */
 	std::vector<T> inOrderValues()
 	{
 		std::vector<T> values;
 		root->inOrderValues(values);
 		return values;
 	}
+	/*
+	 * Gets a vector of pointers to the leaves
+	 */
 	std::vector<Node<T>*> inOrderLeaves()
 	{
 		std::vector<Node<T>*> nodes;
 		root->inOrderNodes(nodes);
 		return nodes;
 	}
+	/*
+	 * Chooses a random level and then random branches until it reaches that level, eventually switching the left and
+	 * right children of a node
+	 */
 	void swapRandomNode()
 	{
 		size_t level = rand() % (depth - 1);
-//		std::cout << "DEBUG - Swapping at level " << level << std::endl;
 		swapRandomNodeHelper(root, level);
 	}
+	/*
+	 * Uses random branches to reach a specified level then swaps those branches
+	 */
+	void swapRandomNodeLevel(size_t level)
+	{
+		swapRandomNodeHelper(root, level);
+	}
+	/*
+	 * Returns the current depth of the tree in layers
+	 */
 	size_t getDepth()
 	{
 		return depth;
 	}
-
-	~Tree()
+	/*
+	 * Deconstructor deletes nodes
+	 */
+	~HipsTree()
 	{
 		recursiveDelete(root);
 	}
 
+	/*
+	 * Tree iterator class allows traversing the leaves of the tree
+	 */
 	class TreeIterator
 	{
 	public:
@@ -122,10 +246,16 @@ public:
 		std::stack<Node<T>*> nodes;
 	};
 
+	/*
+	 * Returns an iterator that will start at the first leaf
+	 */
 	TreeIterator getIterator()
 	{
 		return TreeIterator(root);
 	}
+	/*
+	 * Returns a string of the values of the leaves in order
+	 */
 	std::string toString(const std::string& sep=", ")
 	{
 		std::stringstream ss;
@@ -140,6 +270,10 @@ public:
 	}
 
 private:
+	/*
+	 * Various helper functions and members
+	 */
+
 	void swapRandomNodeHelper(Node<T>* node, size_t level)
 	{
 		if (level == 0)
@@ -149,15 +283,9 @@ private:
 		else
 		{
 			if (rand() % 2)
-			{
-//				std::cout << "DEBUG - Going left" << std::endl;
 				swapRandomNodeHelper(node->getLeft(), level - 1);
-			}
 			else
-			{
-//				std::cout << "DEBUG - Going right" << std::endl;
 				swapRandomNodeHelper(node->getRight(), level - 1);
-			}
 		}
 	}
 	void recursiveDelete(Node<T>* node)
@@ -174,7 +302,8 @@ private:
 		if (level > 0)
 		{
 			auto node = new Node<T>();
-			node->setValue(value);
+			if (level == 1)
+				node->setValue(value);
 			node->setLeft(populateToLevelValueHelper(level - 1, value));
 			node->setRight(populateToLevelValueHelper(level - 1, value));
 			return node;
@@ -203,4 +332,4 @@ private:
 	size_t depth = 0;
 };
 
-#endif //TREE_H
+#endif //HIPSTREE_H
