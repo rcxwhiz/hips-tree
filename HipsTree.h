@@ -192,6 +192,8 @@ public:
 	 */
 	void swapRandomNodeLevel(size_t level)
 	{
+		if (level > depth - 1)
+			throw std::runtime_error("Level too deep to swap");
 		swapRandomNodeHelper(root, level);
 	}
 	/*
