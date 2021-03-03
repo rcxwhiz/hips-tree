@@ -39,7 +39,7 @@ public:
 	{
 		std::swap(left, right);
 	}
-	void inOrderNodes(std::vector<T>& values)
+	void inOrderValues(std::vector<T>& values)
 	{
 		if (isLeaf())
 		{
@@ -48,9 +48,23 @@ public:
 		else
 		{
 			if (left != nullptr)
-				left->inOrderNodes(values);
+				left->inOrderValues(values);
 			if (right != nullptr)
-				right->inOrderNodes(values);
+				right->inOrderValues(values);
+		}
+	}
+	void inOrderNodes(std::vector<Node<T>*>& nodes)
+	{
+		if (isLeaf())
+		{
+			nodes.push_back(this);
+		}
+		else
+		{
+			if (left != nullptr)
+				left->inOrderNodes(nodes);
+			if (right != nullptr)
+				right->inOrderNodes(nodes);
 		}
 	}
 

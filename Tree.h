@@ -1,8 +1,8 @@
 #ifndef TREE_H
 #define TREE_H
 
-#include <iostream>
-
+#include <cmath>
+#include <sstream>
 #include <stack>
 #include <vector>
 
@@ -55,8 +55,14 @@ public:
 	std::vector<T> inOrderValues()
 	{
 		std::vector<T> values;
-		root->inOrderNodes(values);
+		root->inOrderValues(values);
 		return values;
+	}
+	std::vector<Node<T>*> inOrderLeaves()
+	{
+		std::vector<Node<T>*> nodes;
+		root->inOrderNodes(nodes);
+		return nodes;
 	}
 	void swapRandomNode()
 	{
@@ -69,7 +75,6 @@ public:
 		recursiveDelete(root);
 	}
 
-	// FIXME this iterator just breaks the tree a bit
 	class TreeIterator
 	{
 	public:
@@ -110,6 +115,18 @@ public:
 	TreeIterator getIterator()
 	{
 		return TreeIterator(root);
+	}
+	std::string toString(const std::string& sep=", ")
+	{
+		std::stringstream ss;
+		auto it = getIterator();
+		std::string se;
+		while (it.hasNext())
+		{
+			ss << se << it.next()->getValue();
+			se = sep;
+		}
+		return ss.str();
 	}
 
 private:
