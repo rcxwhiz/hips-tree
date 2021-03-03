@@ -26,13 +26,13 @@ int main()
 	std::cout << "Empty tree: " << tree->toString() << std::endl;
 
 	/*
-	 * Populate a tree using a vector
+	 * Populate a tree using a vector (will throw an error if length of vector is not power of 2)
 	 */
 	tree->populateByVector({0, 1, 2, 3});
 	std::cout << "Tree populated: " << tree->toString() << std::endl;
 
 	/*
-	 * Get a tree with values filled in
+	 * Get a tree with values already filled in (will also throw an error if length of vector is not power of 2)
 	 */
 	tree = HipsTree<size_t>::getTree({5, 6, 7, 8});
 	std::cout << "New tree populated: " << tree->toString() << std::endl << std::endl;
@@ -40,7 +40,7 @@ int main()
 	std::cout << " === Node swapping ===" << std::endl << std::endl;
 
 	/*
-	 * Swap random node at specific level
+	 * Swap random node at specific level starting from the root
 	 */
 	tree->swapRandomNodeLevel(0);
 	std::cout << "Tree with root node swapped: " << tree->toString() << std::endl;
@@ -107,8 +107,8 @@ int main()
 	// getting the values of the leaves in order starts to slow down at large sizes
 	const size_t demoTreeSize = 10;
 	const size_t demoTreeSwaps = 10;
-	const size_t numberOfSpacesToPrint = 20;
 	const bool printTree = true;
+	const size_t numberOfSpacesToPrint = 20;
 
 	std::vector<size_t> values;
 	for (size_t i = 0; i < (size_t) pow(2, demoTreeSize); i++)
@@ -116,8 +116,6 @@ int main()
 	tree->populateByVector(values);
 
 	std::cout << "Initial tree with " << demoTreeSize << " levels and " << (size_t) pow(2, demoTreeSize) << " leaves:" << std::endl;
-	// impractical to print at large sizes (and toString could start to introduce performance issues)
-	// std::cout << tree->toString() << std::endl;
 	if (printTree)
 		printLargeTree(tree, numberOfSpacesToPrint);
 
