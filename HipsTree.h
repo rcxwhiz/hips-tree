@@ -17,11 +17,14 @@ class Node
 public:
 	T getValue()
 	{
-		return value;
+		// TODO might want to throw an exception if the value is null
+		return *value;
 	}
 	void setValue(T v)
 	{
-		value = v;
+		delete value;
+		value = new T();
+		*value = v;
 	}
 	Node* getLeft()
 	{
@@ -51,7 +54,7 @@ public:
 	{
 		if (isLeaf())
 		{
-			values.push_back(value);
+			values.push_back(*value);
 		}
 		else
 		{
@@ -79,7 +82,7 @@ public:
 private:
 	Node* left = nullptr;
 	Node* right = nullptr;
-	T value = 0;
+	T* value = nullptr;
 };
 
 /*
