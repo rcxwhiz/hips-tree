@@ -49,7 +49,7 @@ int main()
 	 * Swap random node at random level
 	 */
 	tree->swapRandomNode();
-	std::cout << "Tree with node swapped: " << tree->toString() << std::endl << std::endl;
+	std::cout << "Tree with a random node swapped: " << tree->toString() << std::endl << std::endl;
 
 	std::cout << " === Accessing nodes/values ===" << std::endl << std::endl;
 
