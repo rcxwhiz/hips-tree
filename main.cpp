@@ -17,6 +17,8 @@ void printLargeTree(const std::shared_ptr<HipsTree<size_t>>& tree, size_t numPri
 
 int main()
 {
+	std::cout << " === Populate Tree ===" << std::endl << std::endl;
+
 	/*
 	 * Get an empty tree of whatever type (this tree will automatically manage its memory)
 	 */
@@ -27,13 +29,15 @@ int main()
 	 * Populate a tree using a vector
 	 */
 	tree->populateByVector({0, 1, 2, 3});
-	std::cout << "Tree populated: " << tree->toString() << std::endl << std::endl;
+	std::cout << "Tree populated: " << tree->toString() << std::endl;
 
 	/*
 	 * Get a tree with values filled in
 	 */
 	tree = HipsTree<size_t>::getTree({5, 6, 7, 8});
-	std::cout << "New tree populated: " << tree->toString() << std::endl;
+	std::cout << "New tree populated: " << tree->toString() << std::endl << std::endl;
+
+	std::cout << " === Node swapping ===" << std::endl << std::endl;
 
 	/*
 	 * Swap random node at specific level
@@ -47,6 +51,8 @@ int main()
 	tree->swapRandomNode();
 	std::cout << "Tree with node swapped: " << tree->toString() << std::endl << std::endl;
 
+	std::cout << " === Accessing nodes/values ===" << std::endl << std::endl;
+
 	/*
 	 * Get a vector of pointers to leaves (can use to modify the value of a leaf in tree)
 	 * If your nodes were holding an object instead of a primitive, you could call methods on that object to modify it
@@ -55,7 +61,7 @@ int main()
 
 	// this is the vector
 	auto leaves = tree->inOrderLeaves();
-	std::cout << "Leaf node values: ";
+	std::cout << "Leaf nodes by vector: ";
 	for (const auto& leaf : leaves)
 		std::cout << leaf->getValue() << " ";
 	std::cout << std::endl;
@@ -64,7 +70,7 @@ int main()
 	leaves.at(2)->setValue(400);
 	// get values from tree to show a value in the tree changed
 	leaves = tree->inOrderLeaves();
-	std::cout << "Leaf node values after one has been changed: ";
+	std::cout << "Leaf nodes by vector after a value changed: ";
 	for (const auto& leaf : leaves)
 		std::cout << leaf->getValue() << " ";
 	std::cout << std::endl;
@@ -74,9 +80,19 @@ int main()
 	 */
 	// this is the vector
 	auto leafValues = tree->inOrderValues();
-	std::cout << "Leaf values: ";
+	std::cout << "Leaf values by vector: ";
 	for (const auto& value : leafValues)
 		std::cout << value << " ";
+	std::cout << std::endl;
+
+	/*
+	 * Access leaves by iterator (can be used to modify value of a leaf - can only access one element at a time but uses
+	 * less memory than getting the whole vector)
+	 */
+	auto treeIterator = tree->getIterator();
+	std::cout << "Leaf nodes by iterator: ";
+	while (treeIterator.hasNext())
+		std::cout << treeIterator.next()->getValue() << " ";
 	std::cout << std::endl << std::endl;
 
 	/*
