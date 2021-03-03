@@ -2,29 +2,31 @@
 #define TREE_H
 
 #include <cmath>
+#include <memory>
 #include <sstream>
 #include <stack>
 #include <vector>
 
 #include "Node.h"
 
-bool isPowerOfTwo(int n)
-{
-	if (n == 0)
-		return false;
-	return (ceil(log2(n)) == floor(log2(n)));
-}
-
 template <typename T>
 class Tree
 {
 public:
+	static std::shared_ptr<Tree<T>> getTree()
+	{
+		return std::make_shared<Tree<T>>();
+	}
+	static std::shared_ptr<Tree<T>> getTree(const std::vector<T>& values)
+	{
+		return std::make_shared<Tree<T>>(values);
+	}
 	Tree() = default;
-	explicit Tree(std::vector<T> values)
+	explicit Tree(const std::vector<T>& values)
 	{
 		populateByVector(values);
 	}
-	void populateByVector(std::vector<T> values)
+	void populateByVector(const std::vector<T>& values)
 	{
 		if (!isPowerOfTwo(values.size()))
 			throw std::runtime_error("Vector of values is not a power of 2 in size");
@@ -175,6 +177,12 @@ private:
 			return node;
 		}
 		return nullptr;
+	}
+	bool isPowerOfTwo(int n)
+	{
+		if (n == 0)
+			return false;
+		return (ceil(log2(n)) == floor(log2(n)));
 	}
 
 	Node<T>* root = nullptr;
