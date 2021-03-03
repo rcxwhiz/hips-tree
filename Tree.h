@@ -2,6 +2,7 @@
 #define TREE_H
 
 #include <cmath>
+#include <ctime>
 #include <memory>
 #include <sstream>
 #include <stack>
@@ -15,10 +16,12 @@ class Tree
 public:
 	static std::shared_ptr<Tree<T>> getTree()
 	{
+		srand(time(nullptr));
 		return std::make_shared<Tree<T>>();
 	}
 	static std::shared_ptr<Tree<T>> getTree(const std::vector<T>& values)
 	{
+		srand(time(nullptr));
 		return std::make_shared<Tree<T>>(values);
 	}
 	Tree() = default;
@@ -69,7 +72,12 @@ public:
 	void swapRandomNode()
 	{
 		size_t level = rand() % (depth - 1);
+//		std::cout << "DEBUG - Swapping at level " << level << std::endl;
 		swapRandomNodeHelper(root, level);
+	}
+	size_t getDepth()
+	{
+		return depth;
 	}
 
 	~Tree()
@@ -140,10 +148,16 @@ private:
 		}
 		else
 		{
-			if (rand() % 1)
+			if (rand() % 2)
+			{
+//				std::cout << "DEBUG - Going left" << std::endl;
 				swapRandomNodeHelper(node->getLeft(), level - 1);
+			}
 			else
+			{
+//				std::cout << "DEBUG - Going right" << std::endl;
 				swapRandomNodeHelper(node->getRight(), level - 1);
+			}
 		}
 	}
 	void recursiveDelete(Node<T>* node)
