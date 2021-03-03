@@ -4,7 +4,6 @@
 
 void printLargeTree(const std::shared_ptr<HipsTree<size_t>>& tree, size_t numPrint)
 {
-	std::cout << "Tree: ";
 	auto it = tree->getIterator();
 	for (size_t i = 0; i < numPrint; i++)
 		std::cout << it.next()->getValue() << " ";
@@ -108,7 +107,7 @@ int main()
 
 	for (size_t i = 0; i < demoTreeSwaps; i++)
 	{
-		std::cout << "Swap " << i << ":" << std::endl;
+		std::cout << "Swap " << i << "" << std::endl;
 		tree->swapRandomNode();
 		if (printTree)
 			printLargeTree(tree, numberOfSpacesToPrint);
