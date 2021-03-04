@@ -8,6 +8,15 @@
 #include <stack>
 #include <vector>
 
+// This is the randomGenerator.h located at
+// BYUIgnite:SEC/source/randomGenerator.h
+
+// NOTE: on my arm64 machine randomGenerator.h:22 caused a compilation error
+// extern processor proc;
+// On this repo I have edited the source file to remove that line which theroetically affects behavior by directly using
+// the provided seed without the process id being added
+#include "randomGenerator.h"
+
 /*
  * Node class
  */
@@ -17,7 +26,8 @@ class Node
 public:
 	T getValue()
 	{
-		// TODO might want to throw an exception if the value is null
+		// This could cause a segfault if called on a node with a null data
+		// I am not adding an exception check here because this should be safe user side
 		return *value;
 	}
 	void setValue(T v)
@@ -95,28 +105,30 @@ public:
 	/*
 	 * Gets a shared pointer to a blank tree
 	 */
-	static std::shared_ptr<HipsTree<T>> getTree()
+	static std::shared_ptr<HipsTree<T>> getTree(int randSeed=time(nullptr))
 	{
-		srand(time(nullptr));
-		return std::make_shared<HipsTree<T>>();
+		return std::make_shared<HipsTree<T>>(randSeed);
 	}
 	/*
 	 * Gets a shared pointer to a tree populated with a vector of leaves
 	 */
-	static std::shared_ptr<HipsTree<T>> getTree(const std::vector<T>& values)
+	static std::shared_ptr<HipsTree<T>> getTree(const std::vector<T>& values, int randSeed=time(nullptr))
 	{
-		srand(time(nullptr));
-		return std::make_shared<HipsTree<T>>(values);
+		return std::make_shared<HipsTree<T>>(values, randSeed);
 	}
 	/*
 	 * Default constructor (tricky to use without accidentally calling deconstructor)
 	 */
-	HipsTree() = default;
+	HipsTree(int randSeed)
+	{
+		random = randomGenerator(randSeed);
+	};
 	/*
 	 * Constructor with values (tricky to use without accidentally calling deconstructor)
 	 */
-	explicit HipsTree(const std::vector<T>& values)
+	explicit HipsTree(const std::vector<T>& values, int randSeed)
 	{
+		random = randomGenerator(randSeed);
 		populateByVector(values);
 	}
 	/*
@@ -184,7 +196,7 @@ public:
 	 */
 	void swapRandom()
 	{
-		size_t level = rand() % (depth - 1);
+		size_t level = random.getRandInt(depth - 2);
 		swapRandomNodeHelper(root, level);
 	}
 	/*
@@ -296,7 +308,7 @@ private:
 		}
 		else
 		{
-			if (rand() % 2)
+			if (random.getRandInt(1))
 				swapRandomNodeHelper(node->getLeft(), level - 1);
 			else
 				swapRandomNodeHelper(node->getRight(), level - 1);
@@ -306,8 +318,8 @@ private:
 	{
 		if (level == 0)
 		{
-			bool leftGrandchildLeft = rand() % 2;
-			bool rightGrandchildLeft = rand() % 2;
+			bool leftGrandchildLeft = random.getRandInt(1);
+			bool rightGrandchildLeft = random.getRandInt(1);
 			Node<T>* leftGrandchild = leftGrandchildLeft ? node->getLeft()->getLeft() : node->getLeft()->getRight();
 			Node<T>* rightGrandchild = rightGrandchildLeft % 2 ? node->getRight()->getLeft() : node->getRight()->getRight();
 			if (leftGrandchildLeft)
@@ -321,7 +333,7 @@ private:
 		}
 		else
 		{
-			if (rand() % 2)
+			if (random.getRandInt(1))
 				swapRandomGrandchildHelper(node->getLeft(), level - 1);
 			else
 				swapRandomGrandchildHelper(node->getRight(), level - 1);
@@ -369,6 +381,7 @@ private:
 
 	Node<T>* root = nullptr;
 	size_t depth = 0;
+	randomGenerator random;
 };
 
 #endif //HIPSTREE_H

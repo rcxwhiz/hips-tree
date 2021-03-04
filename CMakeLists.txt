@@ -3,4 +3,4 @@ project(hipstree)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(hipstree main.cpp HipsTree.h)
+add_executable(hipstree main.cpp HipsTree.h randomGenerator.h MersenneTwister.h processor.h processor.cc)

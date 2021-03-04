@@ -110,7 +110,7 @@ int main()
 	const size_t demoTreeSize = 10;
 	const size_t demoTreeSwaps = 10;
 	const bool printTree = true;
-	const size_t numberOfSpacesToPrint = 20;
+	const size_t numberOfSpacesToPrint = 32;
 
 	std::vector<size_t> values;
 	for (size_t i = 0; i < (size_t) pow(2, demoTreeSize); i++)
@@ -123,8 +123,8 @@ int main()
 
 	for (size_t i = 0; i < demoTreeSwaps; i++)
 	{
-		std::cout << "Swap " << i << "" << std::endl;
-		tree->swapRandom();
+		std::cout << "Grandchild swap " << i << "" << std::endl;
+		tree->swapRandomGrandchildrenLevel(rand() % (tree->getDepth() - 2));
 		if (printTree)
 			printLargeTree(tree, numberOfSpacesToPrint);
 	}
