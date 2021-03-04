@@ -182,7 +182,7 @@ public:
 	 * Chooses a random level and then random branches until it reaches that level, eventually switching the left and
 	 * right children of a node
 	 */
-	void swapRandomNode()
+	void swapRandom()
 	{
 		size_t level = rand() % (depth - 1);
 		swapRandomNodeHelper(root, level);
@@ -190,11 +190,20 @@ public:
 	/*
 	 * Uses random branches to reach a specified level then swaps those branches
 	 */
-	void swapRandomNodeLevel(size_t level)
+	void swapRandomLevel(size_t level)
 	{
 		if (level > depth - 1)
-			throw std::runtime_error("Level too deep to swap");
+			throw std::runtime_error("Level too deep for swap");
 		swapRandomNodeHelper(root, level);
+	}
+	/*
+	 * Swap grandchildren as used by hips code
+	 */
+	void swapRandomGrandchildrenLevel(size_t level)
+	{
+		if (level > depth - 2)
+			throw std::runtime_error("Level too deep for grandchild swap");
+		swapRandomGrandchildHelper(root, level);
 	}
 	/*
 	 * Returns the current depth of the tree in layers
@@ -291,6 +300,31 @@ private:
 				swapRandomNodeHelper(node->getLeft(), level - 1);
 			else
 				swapRandomNodeHelper(node->getRight(), level - 1);
+		}
+	}
+	void swapRandomGrandchildHelper(Node<T>* node, size_t level)
+	{
+		if (level == 0)
+		{
+			bool leftGrandchildLeft = rand() % 2;
+			bool rightGrandchildLeft = rand() % 2;
+			Node<T>* leftGrandchild = leftGrandchildLeft ? node->getLeft()->getLeft() : node->getLeft()->getRight();
+			Node<T>* rightGrandchild = rightGrandchildLeft % 2 ? node->getRight()->getLeft() : node->getRight()->getRight();
+			if (leftGrandchildLeft)
+				node->getLeft()->setLeft(rightGrandchild);
+			else
+				node->getLeft()->setRight(rightGrandchild);
+			if (rightGrandchildLeft)
+				node->getRight()->setLeft(leftGrandchild);
+			else
+				node->getRight()->setRight(leftGrandchild);
+		}
+		else
+		{
+			if (rand() % 2)
+				swapRandomGrandchildHelper(node->getLeft(), level - 1);
+			else
+				swapRandomGrandchildHelper(node->getRight(), level - 1);
 		}
 	}
 	void recursiveDelete(Node<T>* node)

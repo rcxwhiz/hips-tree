@@ -42,13 +42,15 @@ int main()
 	/*
 	 * Swap random node at specific level starting from the root
 	 */
-	tree->swapRandomNodeLevel(0);
+	tree->swapRandomLevel(0);
 	std::cout << "Tree with root node swapped: " << tree->toString() << std::endl;
+	tree->swapRandomGrandchildrenLevel(0);
+	std::cout << "Tree with grandchild swap at root: " << tree->toString() << std::endl;
 
 	/*
 	 * Swap random node at random level
 	 */
-	tree->swapRandomNode();
+	tree->swapRandom();
 	std::cout << "Tree with a random node swapped: " << tree->toString() << std::endl << std::endl;
 
 	std::cout << " === Accessing nodes/values ===" << std::endl << std::endl;
@@ -122,7 +124,7 @@ int main()
 	for (size_t i = 0; i < demoTreeSwaps; i++)
 	{
 		std::cout << "Swap " << i << "" << std::endl;
-		tree->swapRandomNode();
+		tree->swapRandom();
 		if (printTree)
 			printLargeTree(tree, numberOfSpacesToPrint);
 	}
